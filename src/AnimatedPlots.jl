@@ -1,5 +1,13 @@
 module AnimatedPlots
 
-# package code goes here
+using Reexport
+@reexport using SFML
 
-end # module
+# Pixels per unit
+global ppu = 20
+
+include("graph.jl")
+include("axis.jl")
+include("plotwindow.jl")
+
+end
