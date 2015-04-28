@@ -1,5 +1,6 @@
 module AnimatedPlots
 
+import Base: isopen
 using Reexport
 @reexport using SFML
 
@@ -37,10 +38,7 @@ function open_window(window::PlotWindow)
 			draw(window)
 		end
 		destroy(window.renderwindow)
-		window = nothing
-		println(window)
 	end
-	println("End")
 end
 
 export open_window, create_window, static_plot
