@@ -2,17 +2,8 @@ using AnimatedPlots
 
 sin_graph = Graph(sin, 3, SFML.red)
 cos_graph = Graph(cos, 3, SFML.blue)
-tan_graph = Graph(x -> tan(0.1x), 3, SFML.green)
 
-window = PlotWindow("Plot", 800, 600)
-add_graph(window, sin_graph)
-add_graph(window, cos_graph)
-add_graph(window, tan_graph)
+window = static_plot(sin_graph)
+static_plot(cos_graph, window)
 
-redraw(window)
-
-while isopen(window)
-	check_input(window)
-
-	draw(window)
-end
+waitfor(window)

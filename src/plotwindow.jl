@@ -6,12 +6,13 @@ type PlotWindow
 	last_mousepos::Vector2f
 	xaxis::RectangleShape
 	yaxis::RectangleShape
+	task
 end
 
 function PlotWindow(plotname::String, width::Integer, height::Integer)
 	settings = ContextSettings()
 	settings.antialiasing_level = 4
-	window = RenderWindow(VideoMode(width, height), plotname, settings, window_resize)
+	window = RenderWindow(VideoMode(width, height), plotname, settings, window_defaultstyle)
 	set_framerate_limit(window, 60)
 
 	graphs = Graph[]
@@ -30,7 +31,7 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
 	rotate(yaxis, 90)
 
-	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis)
+	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, nothing)
 end
 
 function add_graph(window::PlotWindow, graph::Graph)
@@ -100,4 +101,8 @@ function close(window::PlotWindow)
 	close(window.renderwindow)
 end
 
-export PlotWindow, add_graph, redraw, check_input, isopen, draw, close
+function waitfor(window::PlotWindow)
+	Base.wait(window.task)
+end
+
+export PlotWindow, add_graph, redraw, check_input, isopen, draw, close, waitfor

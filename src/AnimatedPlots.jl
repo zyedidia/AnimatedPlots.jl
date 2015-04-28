@@ -1,6 +1,5 @@
 module AnimatedPlots
 
-import Base: isopen
 using Reexport
 importall SFML
 
@@ -15,7 +14,8 @@ function static_plot(graph::Graph, name="Plot", width=800, height=600)
 	window = create_window(name, width, height)
 	add_graph(window, graph)
 	redraw(window)
-	open_window(window)
+	t = open_window(window)
+	window.task = t
 
 	return window
 end
@@ -24,12 +24,15 @@ function static_plot(fun::Function, name="Plot", width=800, height=600)
 end
 
 function static_plot(graph::Graph, window::PlotWindow)
-	add_graph(graph)
+	add_graph(window, graph)
 	redraw(window)
 end
-
 function static_plot(fun::Function, window::PlotWindow)
 	static_plot(Graph(fun), window)
+end
+
+function remove(window, graph::Graph)
+	splice!(window.graphs, find(window.graphs .== graph)[1])
 end
 
 function create_window(name="Plot", width=800, height=600)
@@ -48,6 +51,6 @@ function open_window(window::PlotWindow)
 	end
 end
 
-export open_window, create_window, static_plot
+export open_window, create_window, static_plot, remove
 
 end
