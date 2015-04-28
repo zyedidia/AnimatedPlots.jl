@@ -1,8 +1,8 @@
 module AnimatedPlots
 
+import Base: isopen
 using Reexport
 importall SFML
-using SFML
 
 # Pixels per unit
 global ppu = 20

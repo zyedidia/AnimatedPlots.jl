@@ -11,7 +11,7 @@ end
 function PlotWindow(plotname::String, width::Integer, height::Integer)
 	settings = ContextSettings()
 	settings.antialiasing_level = 4
-	window = RenderWindow(VideoMode(width, height), plotname, settings, window_defaultstyle)
+	window = RenderWindow(VideoMode(width, height), plotname, settings, window_resize)
 	set_framerate_limit(window, 60)
 
 	graphs = Graph[]
