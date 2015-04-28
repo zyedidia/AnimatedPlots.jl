@@ -22,9 +22,12 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	xaxis = RectangleShape()
 	set_fillcolor(xaxis, Color(128, 128, 128))
 	set_size(xaxis, Vector2f(get_size(view).x, 2))
-	set_origin(xaxis, Vector2f(get_size(view).x / 2, 1))
+	set_origin(xaxis, Vector2f(get_size(view).x/2, 1))
 
-	yaxis = copy(xaxis)
+	yaxis = RectangleShape()
+	set_fillcolor(yaxis, Color(128, 128, 128))
+	set_size(yaxis, Vector2f(get_size(view).y, 2))
+	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
 	rotate(yaxis, 90)
 
 	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis)
@@ -42,8 +45,8 @@ function redraw(window::PlotWindow)
 	for i = 1:length(window.graphs)
 		empty!(window.graphs[i].points)
 	end
-	i = Int(center.x - get_size(window.view).x)
-	while i <= center.x + get_size(window.view).x
+	i = Int(center.x - get_size(window.view).x/2)
+	while i <= center.x + get_size(window.view).x/2
 		for j = 1:length(window.graphs)
 			if i % window.graphs[j].accuracy == 0
 				add_point(window.graphs[j], i)
@@ -52,16 +55,20 @@ function redraw(window::PlotWindow)
 
 		i += 1
 	end
+	points_copies = 0
 end
 
 function check_input(window::PlotWindow)
 	while pollevent(window.renderwindow, window.event)
 		if get_type(window.event) == EventType.CLOSED
-			close(window.renderwindow)
+			SFML.close(window.renderwindow)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_PRESSED
 			mouse_event = get_mousebutton(window.event)
 			window.last_mousepos = Vector2f(mouse_event.x, mouse_event.y)
+		end
+		if get_type(window.event) == EventType.MOUSE_BUTTON_RELEASED
+			redraw(window)
 		end
 		if get_type(window.event) == EventType.MOUSE_MOVED
 			if is_mouse_pressed(0)
@@ -69,7 +76,6 @@ function check_input(window::PlotWindow)
 				mousepos = Vector2f(mouse_event.x, mouse_event.y)
 				move(window.view, Vector2f(window.last_mousepos.x - mousepos.x, mousepos.y - window.last_mousepos.y))
 				window.last_mousepos = mousepos
-				redraw(window)
 			end
 		end
 	end
@@ -90,4 +96,8 @@ function draw(window::PlotWindow)
 	display(window.renderwindow)
 end
 
-export PlotWindow, add_graph, redraw, check_input, isopen, draw
+function close(window::PlotWindow)
+	close(window.renderwindow)
+end
+
+export PlotWindow, add_graph, redraw, check_input, isopen, draw, close

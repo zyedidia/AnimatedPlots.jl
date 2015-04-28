@@ -1,9 +1,7 @@
 using AnimatedPlots
 
 sin_graph = Graph(sin, 3, SFML.red)
-sin_graph.accuracy = 5
 cos_graph = Graph(cos, 3, SFML.blue)
-cos_graph.accuracy = 5
 tan_graph = Graph(x -> tan(0.1x), 3, SFML.green)
 
 window = PlotWindow("Plot", 800, 600)

@@ -19,10 +19,10 @@ function add_point(graph::Graph, index::Integer)
 	point_circle = copy(graph.circle)
 	try
 		set_position(point_circle, Vector2f(index, ppu*graph.fun(index/ppu)))
+		push!(graph.points, point_circle)
 	catch DomainError
-		println("Domain Error; Ignoring")
+		destroy(point_circle)
 	end
-	push!(graph.points, point_circle)
 end
 
 function set_color(graph::Graph, color::Color)
