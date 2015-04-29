@@ -63,7 +63,7 @@ end
 function check_input(window::PlotWindow)
 	while pollevent(window.renderwindow, window.event)
 		if get_type(window.event) == EventType.CLOSED
-			SFML.close(window.renderwindow)
+			close(window)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_PRESSED
 			mouse_event = get_mousebutton(window.event)
@@ -108,7 +108,8 @@ function draw(window::PlotWindow)
 end
 
 function close(window::PlotWindow)
-	close(window.renderwindow)
+	println("close")
+	SFML.close(window.renderwindow)
 end
 
 function waitfor(window::PlotWindow)

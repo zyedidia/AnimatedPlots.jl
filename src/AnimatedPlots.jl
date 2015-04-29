@@ -10,29 +10,40 @@ include("graph.jl")
 include("axis.jl")
 include("plotwindow.jl")
 
-function static_plot(graph::Graph, name="Plot", width=800, height=600)
+windows = PlotWindow[]
+
+function static_plot(graph::Graph, name, width, height)
 	window = create_window(name, width, height)
 	add_graph(window, graph)
 	redraw(window)
 	t = open_window(window)
 	window.task = t
+	push!(windows, window)
 
-	return window
+	# return window
 end
-function static_plot(fun::Function, name="Plot", width=800, height=600)
+function static_plot(fun::Function, name, width, height)
 	static_plot(Graph(fun), name, width, height)
 end
 
-function static_plot(graph::Graph, window::PlotWindow)
-	add_graph(window, graph)
-	redraw(window)
+function static_plot(graph::Graph)
+	if length(windows) > 0
+		add_graph(windows[end], graph)
+		redraw(windows[end])
+	else
+		static_plot(graph, "Plot", 800, 600)
+	end
 end
-function static_plot(fun::Function, window::PlotWindow)
-	static_plot(Graph(fun), window)
+function static_plot(fun::Function)
+	if length(windows) > 0
+		static_plot(Graph(fun))
+	else
+		static_plot(fun, "Plot", 800, 600)
+	end
 end
 
-function remove(window, graph::Graph)
-	splice!(window.graphs, find(window.graphs .== graph)[1])
+function remove(graph::Graph)
+	splice!(windows[end].graphs, find(windows[end].graphs .== graph)[1])
 end
 
 function create_window(name="Plot", width=800, height=600)
