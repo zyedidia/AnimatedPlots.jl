@@ -43,14 +43,15 @@ function redraw(window::PlotWindow)
 	update_yaxis(window.renderwindow, window.view, window.yaxis)
 
 	center = get_center(window.view)
-	for i = 1:length(window.graphs)
-		empty!(window.graphs[i].points)
-	end
 	i = Int(center.x - get_size(window.view).x/2)
 	while i <= center.x + get_size(window.view).x/2
 		for j = 1:length(window.graphs)
 			if i % window.graphs[j].accuracy == 0
-				add_point(window.graphs[j], i)
+				if haskey(window.graphs[j].points, i)
+					add_point(window.graphs[j], window.graphs[j].points[i])
+				else
+					add_point(window.graphs[j], i)
+				end
 			end
 		end
 
@@ -69,7 +70,7 @@ function check_input(window::PlotWindow)
 			window.last_mousepos = Vector2f(mouse_event.x, mouse_event.y)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_RELEASED
-			redraw(window)
+			garbagecollect(window)
 		end
 		if get_type(window.event) == EventType.MOUSE_MOVED
 			if is_mouse_pressed(0)
@@ -77,8 +78,17 @@ function check_input(window::PlotWindow)
 				mousepos = Vector2f(mouse_event.x, mouse_event.y)
 				move(window.view, Vector2f(window.last_mousepos.x - mousepos.x, mousepos.y - window.last_mousepos.y))
 				window.last_mousepos = mousepos
+				redraw(window)
 			end
 		end
+	end
+end
+
+function garbagecollect(window::PlotWindow)
+	center = get_center(window.view)
+	width = Vector2f(center.x - get_size(window.view).x/2, center.x + get_size(window.view).x/2)
+	for i = 1:length(window.graphs)
+		remove_points_outside(window.graphs[i], width)
 	end
 end
 
