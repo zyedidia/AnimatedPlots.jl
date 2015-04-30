@@ -15,15 +15,15 @@ julia> Pkg.clone("https://github.com/zyedidia/AnimatedPlots.jl")
 The easiest way to plot a function is to use the `static_plot` function:
 
 ```
-julia> window = static_plot(sin)
-julia> close(window)
+julia> static_plot(sin)
+julia> close(current_window())
 ```
 
 A graph object can also be passed to `static_plot` if you want to be able to modify the graph afterward (such as changing the color or line thickness)
 
 ```
 julia> sin_graph = Graph(sin, 5, SFML.blue) # thickness and color
-julia> window = static_plot(sin_graph)
-julia> static_plot(cos, window)
-julia> close(window)
+julia> static_plot(sin_graph)
+julia> static_plot(cos)
+julia> close(current_window())
 ```
