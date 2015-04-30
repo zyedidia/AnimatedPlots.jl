@@ -24,6 +24,7 @@ A graph object can also be passed to `static_plot` if you want to be able to mod
 ```
 julia> sin_graph = Graph(sin, 5, SFML.blue) # thickness and color
 julia> static_plot(sin_graph)
+julia> set_color(sin_graph, SFML.green)
 julia> static_plot(cos)
 julia> close(current_window())
 ```
