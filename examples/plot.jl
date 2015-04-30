@@ -7,8 +7,8 @@ sin_graph.accuracy = 5
 tan_graph = Graph(x -> tan(0.1x), 3, SFML.green)
 sin_graph.accuracy = 5
 
-window = static_plot(sin_graph)
-static_plot(cos_graph, window)
-static_plot(tan_graph, window)
+static_plot(sin_graph)
+static_plot(cos_graph)
+static_plot(tan_graph)
 
-waitfor(window)
+waitfor(current_window())

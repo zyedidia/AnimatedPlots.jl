@@ -19,8 +19,7 @@ function static_plot(graph::Graph, name, width, height)
 	t = open_window(window)
 	window.task = t
 	push!(windows, window)
-
-	# return window
+	nothing
 end
 function static_plot(fun::Function, name, width, height)
 	static_plot(Graph(fun), name, width, height)
@@ -30,6 +29,7 @@ function static_plot(graph::Graph)
 	if length(windows) > 0
 		add_graph(windows[end], graph)
 		redraw(windows[end])
+		nothing
 	else
 		static_plot(graph, "Plot", 800, 600)
 	end
@@ -57,11 +57,16 @@ function open_window(window::PlotWindow)
 		while isopen(window)
 			sleep(0)
 			check_input(window)
+			redraw(window)
 			draw(window)
 		end
 	end
 end
 
-export open_window, create_window, static_plot, remove
+function current_window()
+	return windows[end]
+end
+
+export open_window, create_window, static_plot, remove, current_window
 
 end

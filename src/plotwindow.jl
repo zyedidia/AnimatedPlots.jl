@@ -78,7 +78,7 @@ function check_input(window::PlotWindow)
 				mousepos = Vector2f(mouse_event.x, mouse_event.y)
 				move(window.view, Vector2f(window.last_mousepos.x - mousepos.x, mousepos.y - window.last_mousepos.y))
 				window.last_mousepos = mousepos
-				redraw(window)
+				# @time redraw(window)
 			end
 		end
 	end
