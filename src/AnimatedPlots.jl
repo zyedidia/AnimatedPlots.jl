@@ -60,6 +60,7 @@ function open_window(window::PlotWindow)
 			redraw(window)
 			draw(window)
 		end
+		splice!(windows, find(windows .== window)[1])
 	end
 end
 

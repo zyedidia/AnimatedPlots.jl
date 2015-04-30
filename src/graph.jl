@@ -51,13 +51,14 @@ end
 function draw(window::RenderWindow, graph::Graph)
 	last_circle = 0
 	points = graph.points
-	for key in sort(collect(keys(graph.points)))
+	sortedpoints = sort(collect(keys(graph.points)))
+	for key in sortedpoints
 		if last_circle != 0
 			global l = Line(get_position(points[key]), get_position(last_circle), get_thickness(graph))
 			set_fillcolor(l, get_color(graph))
 			SFML.draw(window, l)
 		end
-		SFML.draw(window, points[key])
+		# SFML.draw(window, points[key])
 		last_circle = points[key]
 	end
 end

@@ -63,7 +63,7 @@ end
 function check_input(window::PlotWindow)
 	while pollevent(window.renderwindow, window.event)
 		if get_type(window.event) == EventType.CLOSED
-			close(window)
+			SFML.close(window.renderwindow)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_PRESSED
 			mouse_event = get_mousebutton(window.event)
@@ -78,7 +78,6 @@ function check_input(window::PlotWindow)
 				mousepos = Vector2f(mouse_event.x, mouse_event.y)
 				move(window.view, Vector2f(window.last_mousepos.x - mousepos.x, mousepos.y - window.last_mousepos.y))
 				window.last_mousepos = mousepos
-				# @time redraw(window)
 			end
 		end
 	end
@@ -108,7 +107,6 @@ function draw(window::PlotWindow)
 end
 
 function close(window::PlotWindow)
-	println("close")
 	SFML.close(window.renderwindow)
 end
 
