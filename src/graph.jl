@@ -15,7 +15,7 @@ function Graph(fun::Function, thickness = 2, color = SFML.red)
 	return g
 end
 
-function add_point(graph::Graph, index::Integer)
+function add_point(graph::Graph, index::Integer, ppu::Real)
 	point_circle = copy(graph.circle)
 	try
 		set_position(point_circle, Vector2f(index, ppu*graph.fun(index/ppu)))

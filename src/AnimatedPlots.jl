@@ -3,9 +3,6 @@ module AnimatedPlots
 using Reexport
 importall SFML
 
-# Pixels per unit
-global ppu = 20
-
 include("graph.jl")
 include("axis.jl")
 include("plotwindow.jl")
@@ -25,8 +22,8 @@ function static_plot(fun::Function, name, width, height)
 	static_plot(Graph(fun), name, width, height)
 end
 
-function static_plot(graph::Graph)
-	if length(windows) > 0
+function static_plot(graph::Graph, new_window=false)
+	if length(windows) > 0 && !new_window
 		add_graph(windows[end], graph)
 		redraw(windows[end])
 		nothing
@@ -34,8 +31,8 @@ function static_plot(graph::Graph)
 		static_plot(graph, "Plot", 800, 600)
 	end
 end
-function static_plot(fun::Function)
-	if length(windows) > 0
+function static_plot(fun::Function, new_window=false)
+	if length(windows) > 0 && !new_window
 		static_plot(Graph(fun))
 	else
 		static_plot(fun, "Plot", 800, 600)
@@ -57,7 +54,7 @@ function open_window(window::PlotWindow)
 		while isopen(window)
 			sleep(0)
 			check_input(window)
-			redraw(window)
+			redraw(window, true)
 			draw(window)
 		end
 		splice!(windows, find(windows .== window)[1])

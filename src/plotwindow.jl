@@ -6,6 +6,7 @@ type PlotWindow
 	last_mousepos::Vector2f
 	xaxis::RectangleShape
 	yaxis::RectangleShape
+	ppu::Real
 	task
 end
 
@@ -31,26 +32,30 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
 	rotate(yaxis, 90)
 
-	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, nothing)
+	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, nothing)
 end
 
 function add_graph(window::PlotWindow, graph::Graph)
 	push!(window.graphs, graph)
 end
 
-function redraw(window::PlotWindow)
+function redraw(window::PlotWindow, fullredraw=false)
 	update_xaxis(window.renderwindow, window.view, window.xaxis)
 	update_yaxis(window.renderwindow, window.view, window.yaxis)
 
 	center = get_center(window.view)
-	i = Int(center.x - get_size(window.view).x/2)
-	while i <= center.x + get_size(window.view).x/2
+	i = Int(round(center.x - get_size(window.view).x/2))
+	while i <= Int(round(center.x + get_size(window.view).x/2))
 		for j = 1:length(window.graphs)
 			if i % window.graphs[j].accuracy == 0
-				if haskey(window.graphs[j].points, i)
-					add_point(window.graphs[j], window.graphs[j].points[i])
+				if fullredraw
+					if haskey(window.graphs[j].points, i)
+						add_point(window.graphs[j], window.graphs[j].points[i])
+					else
+						add_point(window.graphs[j], i, window.ppu)
+					end
 				else
-					add_point(window.graphs[j], i)
+					add_point(window.graphs[j], i, window.ppu)
 				end
 			end
 		end
@@ -64,6 +69,17 @@ function check_input(window::PlotWindow)
 	while pollevent(window.renderwindow, window.event)
 		if get_type(window.event) == EventType.CLOSED
 			SFML.close(window.renderwindow)
+		end
+		if get_type(window.event) == EventType.MOUSE_WHEEL_MOVED
+			oldcenter = Vector2f(get_center(window.view).x / window.ppu, get_center(window.view).y / window.ppu)
+			delta = get_mousewheel(window.event).delta
+			window.ppu += delta / 10
+			if window.ppu < 0
+				window.ppu = 0.01
+			end
+			set_center(window.view, Vector2f(oldcenter.x*window.ppu, oldcenter.y*window.ppu))
+			redraw(window, true)
+			garbagecollect(window)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_PRESSED
 			mouse_event = get_mousebutton(window.event)
