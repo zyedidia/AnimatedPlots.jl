@@ -14,7 +14,7 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	settings = ContextSettings()
 	settings.antialiasing_level = 4
 	window = RenderWindow(VideoMode(width, height), plotname, settings, window_defaultstyle)
-	set_framerate_limit(window, 60)
+	# set_framerate_limit(window, 60)
 
 	graphs = Graph[]
 
@@ -43,19 +43,27 @@ function redraw(window::PlotWindow, fullredraw=false)
 	update_xaxis(window.renderwindow, window.view, window.xaxis)
 	update_yaxis(window.renderwindow, window.view, window.yaxis)
 
+	for i = 1:length(window.graphs)
+		if typeof(window.graphs[i]) == AnimatedGraph
+			advance(window.graphs[i], window.ppu)
+		end
+	end
+
 	center = get_center(window.view)
 	i = Int(round(center.x - get_size(window.view).x/2))
 	while i <= Int(round(center.x + get_size(window.view).x/2))
 		for j = 1:length(window.graphs)
-			if i % window.graphs[j].accuracy == 0
-				if fullredraw
-					if haskey(window.graphs[j].points, i)
-						add_point(window.graphs[j], window.graphs[j].points[i])
+			if typeof(window.graphs[j]) == StaticGraph
+				if i % window.graphs[j].accuracy == 0
+					if !fullredraw
+						if haskey(window.graphs[j].points, i)
+							add_point(window.graphs[j], window.graphs[j].points[i])
+						else
+							add_point(window.graphs[j], i, window.ppu)
+						end
 					else
 						add_point(window.graphs[j], i, window.ppu)
 					end
-				else
-					add_point(window.graphs[j], i, window.ppu)
 				end
 			end
 		end
@@ -103,7 +111,9 @@ function garbagecollect(window::PlotWindow)
 	center = get_center(window.view)
 	width = Vector2f(center.x - get_size(window.view).x/2, center.x + get_size(window.view).x/2)
 	for i = 1:length(window.graphs)
-		remove_points_outside(window.graphs[i], width)
+		if typeof(window.graphs[i]) == StaticGraph
+			remove_points_outside(window.graphs[i], width)
+		end
 	end
 end
 

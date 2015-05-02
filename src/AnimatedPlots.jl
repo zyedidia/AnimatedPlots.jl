@@ -9,7 +9,7 @@ include("plotwindow.jl")
 
 windows = PlotWindow[]
 
-function static_plot(graph::Graph, name, width, height)
+function plot(graph::Graph, name, width, height)
 	window = create_window(name, width, height)
 	add_graph(window, graph)
 	redraw(window)
@@ -18,24 +18,24 @@ function static_plot(graph::Graph, name, width, height)
 	push!(windows, window)
 	nothing
 end
-function static_plot(fun::Function, name, width, height)
-	static_plot(Graph(fun), name, width, height)
+function plot(fun::Function, name, width, height)
+	plot(Graph(fun), name, width, height)
 end
 
-function static_plot(graph::Graph, new_window=false)
+function plot(graph::Graph, new_window=false)
 	if length(windows) > 0 && !new_window
 		add_graph(windows[end], graph)
 		redraw(windows[end])
 		nothing
 	else
-		static_plot(graph, "Plot", 800, 600)
+		plot(graph, "Plot", 800, 600)
 	end
 end
-function static_plot(fun::Function, new_window=false)
+function plot(fun::Function, new_window=false)
 	if length(windows) > 0 && !new_window
-		static_plot(Graph(fun))
+		plot(Graph(fun))
 	else
-		static_plot(fun, "Plot", 800, 600)
+		plot(fun, "Plot", 800, 600)
 	end
 end
 
@@ -54,7 +54,7 @@ function open_window(window::PlotWindow)
 		while isopen(window)
 			sleep(0)
 			check_input(window)
-			redraw(window, true)
+			redraw(window)
 			draw(window)
 		end
 		splice!(windows, find(windows .== window)[1])
@@ -65,6 +65,6 @@ function current_window()
 	return windows[end]
 end
 
-export open_window, create_window, static_plot, remove, current_window
+export open_window, create_window, plot, remove, current_window
 
 end

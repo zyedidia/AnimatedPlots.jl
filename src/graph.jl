@@ -1,31 +1,69 @@
-type Graph
+abstract Graph
+
+type StaticGraph <: Graph
 	fun::Function
 	points::Dict{Integer, CircleShape}
 	circle::CircleShape
 	accuracy::Integer
 end
 
-function Graph(fun::Function, thickness = 2, color = SFML.red)
+type AnimatedGraph <: Graph
+	fun::Function
+	points::Dict{Integer, CircleShape}
+	circle::CircleShape
+	accuracy::Integer
+	xval::Real
+	speed::Real
+	clock::Clock
+end
+
+function StaticGraph(fun::Function, thickness = 2, color = SFML.red)
 	points = Dict{Integer, CircleShape}()
 	circle = CircleShape()
-	g = Graph(fun, points, circle, 1)
+	g = StaticGraph(fun, points, circle, 1)
 	set_origin(g.circle, Vector2f(thickness/2, thickness/2))
 	set_color(g, color)
 	set_thickness(g, thickness)
-	return g
+	g
 end
 
-function add_point(graph::Graph, index::Integer, ppu::Real)
+function AnimatedGraph(fun::Function, thickness = 2, color = SFML.red, startingx = 0)
+	points = Dict{Integer, CircleShape}()
+	circle = CircleShape()
+	clock = Clock()
+	restart(clock)
+	g = AnimatedGraph(fun, points, circle, 1, startingx, 60, clock)
+	set_origin(g.circle, Vector2f(thickness/2, thickness/2))
+	set_color(g, color)
+	set_thickness(g, thickness)
+	g
+end
+
+function advance(graph::AnimatedGraph, ppu::Real)
+	if as_seconds(get_elapsed_time(graph.clock)) >= 1/graph.speed
+		point_circle = copy(graph.circle)
+		try
+			restart(graph.clock)
+			set_position(point_circle, Vector2f(graph.xval, ppu*graph.fun(graph.xval/ppu)))
+			graph.points[graph.xval] = point_circle
+			graph.xval += graph.accuracy
+		catch exception
+			destroy(point_circle)
+		end
+	end
+end
+
+function add_point(graph::StaticGraph, index::Integer, ppu::Real)
 	point_circle = copy(graph.circle)
 	try
 		set_position(point_circle, Vector2f(index, ppu*graph.fun(index/ppu)))
 		graph.points[index] = point_circle
-	catch DomainError
+	catch exception
 		destroy(point_circle)
 	end
 end
 
-function add_point(graph::Graph, shape::CircleShape)
+function add_point(graph::StaticGraph, shape::CircleShape)
 	point_circle = copy(graph.circle)
 	set_position(point_circle, get_position(shape))
 	graph.points[get_position(shape).x] = point_circle
@@ -54,9 +92,10 @@ function draw(window::RenderWindow, graph::Graph)
 	sortedpoints = sort(collect(keys(graph.points)))
 	for key in sortedpoints
 		if last_circle != 0
-			global l = Line(get_position(points[key]), get_position(last_circle), get_thickness(graph))
+			l = Line(get_position(points[key]), get_position(last_circle), get_thickness(graph))
 			set_fillcolor(l, get_color(graph))
 			SFML.draw(window, l)
+			destroy(l)
 		end
 		# SFML.draw(window, points[key])
 		last_circle = points[key]
@@ -72,5 +111,5 @@ function remove_points_outside(graph::Graph, size::Vector2f)
 	end
 end
 
-export Graph, add_point, set_color, get_color, get_thickness, set_thickness, draw,
-remove_points_outside
+export Graph, StaticGraph, AnimatedGraph, add_point, set_color, get_color, get_thickness, set_thickness, draw,
+remove_points_outside, advance
