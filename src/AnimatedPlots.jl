@@ -19,7 +19,7 @@ function plot(graph::Graph, name, width, height)
 	nothing
 end
 function plot(fun::Function, name, width, height)
-	plot(Graph(fun), name, width, height)
+	plot(StaticGraph(fun), name, width, height)
 end
 
 function plot(graph::Graph, new_window=false)
@@ -33,10 +33,17 @@ function plot(graph::Graph, new_window=false)
 end
 function plot(fun::Function, new_window=false)
 	if length(windows) > 0 && !new_window
-		plot(Graph(fun))
+		plot(StaticGraph(fun))
 	else
 		plot(fun, "Plot", 800, 600)
 	end
+end
+
+function get_window(graph::Graph, name="Plot", width=800, height=600)
+	window = create_window(name, width, height)
+	add_graph(window, graph)
+	redraw(window)
+	return window
 end
 
 function remove(graph::Graph)
@@ -55,7 +62,9 @@ function open_window(window::PlotWindow)
 			sleep(0)
 			check_input(window)
 			redraw(window)
+			clear(window.renderwindow, SFML.white)
 			draw(window)
+			display(window.renderwindow)
 		end
 		splice!(windows, find(windows .== window)[1])
 	end
@@ -65,6 +74,6 @@ function current_window()
 	return windows[end]
 end
 
-export open_window, create_window, plot, remove, current_window
+export open_window, create_window, plot, remove, current_window, get_window
 
 end

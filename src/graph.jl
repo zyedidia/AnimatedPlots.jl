@@ -2,114 +2,95 @@ abstract Graph
 
 type StaticGraph <: Graph
 	fun::Function
-	points::Dict{Integer, CircleShape}
-	circle::CircleShape
+	points::Dict{Integer, Vector2f}
 	accuracy::Integer
+	color::Color
+	thickness::Real
 end
 
 type AnimatedGraph <: Graph
 	fun::Function
-	points::Dict{Integer, CircleShape}
-	circle::CircleShape
+	points::Dict{Integer, Vector2f}
 	accuracy::Integer
 	xval::Real
+	startx::Real
 	speed::Real
 	clock::Clock
+	rtime::Real
+	color::Color
+	thickness::Real
 end
 
 function StaticGraph(fun::Function, thickness = 2, color = SFML.red)
-	points = Dict{Integer, CircleShape}()
-	circle = CircleShape()
-	g = StaticGraph(fun, points, circle, 1)
-	set_origin(g.circle, Vector2f(thickness/2, thickness/2))
-	set_color(g, color)
-	set_thickness(g, thickness)
-	g
+	points = Dict{Integer, Vector2f}()
+	StaticGraph(fun, points, 1, color, thickness)
 end
 
-function AnimatedGraph(fun::Function, thickness = 2, color = SFML.red, startingx = 0)
-	points = Dict{Integer, CircleShape}()
-	circle = CircleShape()
+function AnimatedGraph(fun::Function, thickness = 2, color = SFML.red, startx = 0)
+	points = Dict{Integer, Vector2f}()
 	clock = Clock()
-	restart(clock)
-	g = AnimatedGraph(fun, points, circle, 1, startingx, 60, clock)
-	set_origin(g.circle, Vector2f(thickness/2, thickness/2))
-	set_color(g, color)
-	set_thickness(g, thickness)
-	g
+	AnimatedGraph(fun, points, 1, startx, startx, 60, clock, 0, color, thickness)
 end
 
 function advance(graph::AnimatedGraph, ppu::Real)
-	if as_seconds(get_elapsed_time(graph.clock)) >= 1/graph.speed
-		point_circle = copy(graph.circle)
+	if graph.xval == graph.startx
+		restart(graph.clock)
+		advancex(graph)
+	end
+	elapsedtime = as_seconds(get_elapsed_time(graph.clock)) + graph.rtime
+	interval = 1/graph.speed * graph.accuracy
+	while elapsedtime >= interval
 		try
 			restart(graph.clock)
-			set_position(point_circle, Vector2f(graph.xval, ppu*graph.fun(graph.xval/ppu)))
-			graph.points[graph.xval] = point_circle
-			graph.xval += graph.accuracy
+			pos = Vector2f(graph.xval, ppu*graph.fun(graph.xval/ppu))
+			graph.points[graph.xval] = pos
 		catch exception
-			destroy(point_circle)
 		end
+		advancex(graph)
+		elapsedtime -= interval
 	end
+	graph.rtime = elapsedtime
 end
 
-function add_point(graph::StaticGraph, index::Integer, ppu::Real)
-	point_circle = copy(graph.circle)
+function advancex(graph::AnimatedGraph)
+	graph.xval += graph.accuracy
+end
+
+function add_point(graph::Graph, index::Integer, ppu::Real)
 	try
-		set_position(point_circle, Vector2f(index, ppu*graph.fun(index/ppu)))
-		graph.points[index] = point_circle
+		pos = Vector2f(index, ppu*graph.fun(index/ppu))
+		graph.points[index] = pos
 	catch exception
-		destroy(point_circle)
 	end
 end
 
-function add_point(graph::StaticGraph, shape::CircleShape)
-	point_circle = copy(graph.circle)
-	set_position(point_circle, get_position(shape))
-	graph.points[get_position(shape).x] = point_circle
-	destroy(shape)
-end
-
-function set_color(graph::Graph, color::Color)
-	set_fillcolor(graph.circle, color)
-end
-
-function get_color(graph::Graph)
-	get_fillcolor(graph.circle)
-end
-
-function set_thickness(graph::Graph, thickness::Real)
-	set_radius(graph.circle, thickness/2)
-end
-
-function get_thickness(graph::Graph)
-	get_radius(graph.circle) * 2
+function add_point(graph::Graph, pos::Vector2f)
+	graph.points[pos.x] = pos
 end
 
 function draw(window::RenderWindow, graph::Graph)
-	last_circle = 0
+	last_pos = 0
 	points = graph.points
 	sortedpoints = sort(collect(keys(graph.points)))
 	for key in sortedpoints
-		if last_circle != 0
-			l = Line(get_position(points[key]), get_position(last_circle), get_thickness(graph))
-			set_fillcolor(l, get_color(graph))
+		if last_pos != 0
+			l = Line(points[key], last_pos, graph.thickness)
+			set_fillcolor(l, graph.color)
 			SFML.draw(window, l)
 			destroy(l)
 		end
 		# SFML.draw(window, points[key])
-		last_circle = points[key]
+		last_pos = points[key]
 	end
 end
 
 function remove_points_outside(graph::Graph, size::Vector2f)
 	for keyval in graph.points
 		if !(size.x < keyval[1] < size.y)
-			destroy(graph.points[keyval[1]])
 			delete!(graph.points, keyval[1])
 		end
 	end
 end
 
 export Graph, StaticGraph, AnimatedGraph, add_point, set_color, get_color, get_thickness, set_thickness, draw,
-remove_points_outside, advance
+remove_points_outside, advance, advancex

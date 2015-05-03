@@ -7,6 +7,7 @@ type PlotWindow
 	xaxis::RectangleShape
 	yaxis::RectangleShape
 	ppu::Real
+	followgraph::AnimatedGraph
 	task
 end
 
@@ -32,7 +33,7 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
 	rotate(yaxis, 90)
 
-	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, nothing)
+	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(sin), nothing)
 end
 
 function add_graph(window::PlotWindow, graph::Graph)
@@ -43,17 +44,30 @@ function redraw(window::PlotWindow, fullredraw=false)
 	update_xaxis(window.renderwindow, window.view, window.xaxis)
 	update_yaxis(window.renderwindow, window.view, window.yaxis)
 
-	for i = 1:length(window.graphs)
-		if typeof(window.graphs[i]) == AnimatedGraph
-			advance(window.graphs[i], window.ppu)
-		end
+	center = get_center(window.view)
+	left = Int(round(center.x - get_size(window.view).x/2))
+	right = Int(round(center.x + get_size(window.view).x/2))
+
+	if window.followgraph != nothing
+		set_center(window.view, Vector2f(window.followgraph.xval - get_size(window.view).x/2 + 10, 0))
 	end
 
-	center = get_center(window.view)
-	i = Int(round(center.x - get_size(window.view).x/2))
-	while i <= Int(round(center.x + get_size(window.view).x/2))
-		for j = 1:length(window.graphs)
-			if typeof(window.graphs[j]) == StaticGraph
+	for j = 1:length(window.graphs)
+		i = left
+		if typeof(window.graphs[j]) == AnimatedGraph
+			if window.graphs[j].xval > right
+				advancex(window.graphs[j])
+			else
+				advance(window.graphs[j], window.ppu)
+			end
+		end
+		while i <= right
+			if typeof(window.graphs[j]) == AnimatedGraph
+				if i > window.graphs[j].xval
+					break
+				end
+			end
+			# if typeof(window.graphs[j]) == StaticGraph
 				if i % window.graphs[j].accuracy == 0
 					if !fullredraw
 						if haskey(window.graphs[j].points, i)
@@ -65,12 +79,13 @@ function redraw(window::PlotWindow, fullredraw=false)
 						add_point(window.graphs[j], i, window.ppu)
 					end
 				end
-			end
+				i += 1
+			# else
+			# 	break
+			# end
 		end
-
-		i += 1
 	end
-	points_copies = 0
+	garbagecollect(window)
 end
 
 function check_input(window::PlotWindow)
@@ -87,7 +102,6 @@ function check_input(window::PlotWindow)
 			end
 			set_center(window.view, Vector2f(oldcenter.x*window.ppu, oldcenter.y*window.ppu))
 			redraw(window, true)
-			garbagecollect(window)
 		end
 		if get_type(window.event) == EventType.MOUSE_BUTTON_PRESSED
 			mouse_event = get_mousebutton(window.event)
@@ -111,9 +125,9 @@ function garbagecollect(window::PlotWindow)
 	center = get_center(window.view)
 	width = Vector2f(center.x - get_size(window.view).x/2, center.x + get_size(window.view).x/2)
 	for i = 1:length(window.graphs)
-		if typeof(window.graphs[i]) == StaticGraph
+		# if typeof(window.graphs[i]) == StaticGraph
 			remove_points_outside(window.graphs[i], width)
-		end
+		# end
 	end
 end
 
@@ -121,15 +135,17 @@ function isopen(window::PlotWindow)
 	SFML.isopen(window.renderwindow)
 end
 
+function follow(window::PlotWindow, graph::Graph)
+	window.followgraph = window.graphs[find(window.graphs .== graph)[1]]
+end
+
 function draw(window::PlotWindow)
-	clear(window.renderwindow, SFML.white)
 	set_view(window.renderwindow, window.view)
 	SFML.draw(window.renderwindow, window.xaxis)
 	SFML.draw(window.renderwindow, window.yaxis)
 	for i = 1:length(window.graphs)
 		draw(window.renderwindow, window.graphs[i])
 	end
-	display(window.renderwindow)
 end
 
 function close(window::PlotWindow)
@@ -140,4 +156,4 @@ function waitfor(window::PlotWindow)
 	Base.wait(window.task)
 end
 
-export PlotWindow, add_graph, redraw, check_input, isopen, draw, close, waitfor
+export PlotWindow, add_graph, redraw, check_input, isopen, draw, close, waitfor, follow
