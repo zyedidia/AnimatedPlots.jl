@@ -1,10 +1,10 @@
 using AnimatedPlots
 
-sin_graph = StaticGraph(sin, 3, SFML.red)
+sin_graph = StaticGraph(sin, color=SFML.red)
 sin_graph.accuracy = 5
-cos_graph = StaticGraph(cos, 3, SFML.blue)
+cos_graph = StaticGraph(cos, color=SFML.blue)
 sin_graph.accuracy = 5
-tan_graph = StaticGraph(x -> tan(0.1x), 3, SFML.green)
+tan_graph = StaticGraph(x -> tan(0.1x), color=SFML.green)
 sin_graph.accuracy = 5
 
 plot(sin_graph)

@@ -19,12 +19,13 @@ end
 
 t_graph = AnimatedGraph(ft)
 t_graph.accuracy = 2
-a_graph = AnimatedGraph(fa, 2, SFML.blue)
+a_graph = AnimatedGraph(fa, color=SFML.blue)
 a_graph.accuracy = 2
-plotwindow = get_window(t_graph)
+plotwindow = create_window(name="Double Pendulum")
+add_graph(plotwindow, t_graph)
 add_graph(plotwindow, a_graph)
 
-follow(plotwindow, t_graph)
+follow(t_graph)
 
 # settings = ContextSettings()
 # settings.antialiasing_level = 3

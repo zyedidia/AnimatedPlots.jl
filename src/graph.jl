@@ -21,12 +21,12 @@ type AnimatedGraph <: Graph
 	thickness::Real
 end
 
-function StaticGraph(fun::Function, thickness = 2, color = SFML.red)
+function StaticGraph(fun::Function; thickness=2, color=SFML.red)
 	points = Dict{Integer, Vector2f}()
 	StaticGraph(fun, points, 1, color, thickness)
 end
 
-function AnimatedGraph(fun::Function, thickness = 2, color = SFML.red, startx = 0)
+function AnimatedGraph(fun::Function; thickness = 2, color = SFML.red, startx = 0)
 	points = Dict{Integer, Vector2f}()
 	clock = Clock()
 	AnimatedGraph(fun, points, 1, startx, startx, 60, clock, 0, color, thickness)
@@ -71,8 +71,8 @@ end
 function draw(window::RenderWindow, graph::Graph)
 	last_pos = 0
 	points = graph.points
-	sortedpoints = sort(collect(keys(graph.points)))
-	for key in sortedpoints
+	sortedkeys = sort(collect(keys(graph.points)))
+	for key in sortedkeys
 		if last_pos != 0
 			l = Line(points[key], last_pos, graph.thickness)
 			set_fillcolor(l, graph.color)
@@ -92,5 +92,4 @@ function remove_points_outside(graph::Graph, size::Vector2f)
 	end
 end
 
-export Graph, StaticGraph, AnimatedGraph, add_point, set_color, get_color, get_thickness, set_thickness, draw,
-remove_points_outside, advance, advancex
+export Graph, StaticGraph, AnimatedGraph

@@ -33,7 +33,7 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
 	rotate(yaxis, 90)
 
-	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(sin), nothing)
+	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(x -> 0), nothing)
 end
 
 function add_graph(window::PlotWindow, graph::Graph)
@@ -48,7 +48,7 @@ function redraw(window::PlotWindow, fullredraw=false)
 	left = Int(round(center.x - get_size(window.view).x/2))
 	right = Int(round(center.x + get_size(window.view).x/2))
 
-	if window.followgraph != nothing
+	if window.followgraph in window.graphs
 		set_center(window.view, Vector2f(window.followgraph.xval - get_size(window.view).x/2 + 10, 0))
 	end
 
@@ -137,6 +137,11 @@ end
 
 function follow(window::PlotWindow, graph::Graph)
 	window.followgraph = window.graphs[find(window.graphs .== graph)[1]]
+	nothing
+end
+
+function unfollow(window::PlotWindow)
+	window.followgraph = AnimatedGraph(x -> 0)
 end
 
 function draw(window::PlotWindow)

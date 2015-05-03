@@ -10,19 +10,18 @@ include("plotwindow.jl")
 windows = PlotWindow[]
 
 function plot(graph::Graph, name, width, height)
-	window = create_window(name, width, height)
+	window = create_window(name=name, width=width, height=height)
 	add_graph(window, graph)
 	redraw(window)
 	t = open_window(window)
 	window.task = t
-	push!(windows, window)
 	nothing
 end
 function plot(fun::Function, name, width, height)
 	plot(StaticGraph(fun), name, width, height)
 end
 
-function plot(graph::Graph, new_window=false)
+function plot(graph::Graph; new_window=false)
 	if length(windows) > 0 && !new_window
 		add_graph(windows[end], graph)
 		redraw(windows[end])
@@ -31,7 +30,7 @@ function plot(graph::Graph, new_window=false)
 		plot(graph, "Plot", 800, 600)
 	end
 end
-function plot(fun::Function, new_window=false)
+function plot(fun::Function; new_window=false)
 	if length(windows) > 0 && !new_window
 		plot(StaticGraph(fun))
 	else
@@ -39,20 +38,14 @@ function plot(fun::Function, new_window=false)
 	end
 end
 
-function get_window(graph::Graph, name="Plot", width=800, height=600)
-	window = create_window(name, width, height)
-	add_graph(window, graph)
-	redraw(window)
-	return window
-end
-
 function remove(graph::Graph)
 	splice!(windows[end].graphs, find(windows[end].graphs .== graph)[1])
 end
 
-function create_window(name="Plot", width=800, height=600)
+function create_window(; name="Plot", width=800, height=600)
 	window = PlotWindow(name, width, height)
 	redraw(window)
+	push!(windows, window)
 	return window
 end
 
@@ -74,6 +67,14 @@ function current_window()
 	return windows[end]
 end
 
-export open_window, create_window, plot, remove, current_window, get_window
+function follow(graph::AnimatedGraph)
+	follow(current_window(), graph)
+end
+
+function unfollow()
+	unfollow(current_window())
+end
+
+export open_window, create_window, plot, remove, current_window, get_window, follow, unfollow
 
 end
