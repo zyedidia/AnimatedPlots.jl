@@ -4,8 +4,10 @@ function make_gif(window::PlotWindow, width, height, duration, filename="plot.gi
 	delay_clock = Clock()
 
 	@async begin
+		println("Taking pictures")
 		while as_seconds(get_elapsed_time(duration_clock)) <= duration
 			sleep(0)
+			print("$(round(as_seconds(get_elapsed_time(duration_clock))/duration*100))% done\r")
 			if as_seconds(get_elapsed_time(delay_clock)) >= delay
 				restart(delay_clock)
 				texture = Texture(800, 600)
@@ -15,15 +17,16 @@ function make_gif(window::PlotWindow, width, height, duration, filename="plot.gi
 		end
 		make_gif(textures, width, height, filename, delay)
 	end
+	nothing
 end
 
 function make_gif(textures::Array{Texture}, width, height, filename="plot.gif", delay=0.06)
 	images = Image[]
 	for i = 1:length(textures)
 		push!(images, copy_to_image(textures[i]))
-		println("Copied image")
 	end
 
+	println("Done taking pictures")
 	make_gif(images, width, height, filename, delay)
 end
 
@@ -39,7 +42,7 @@ function make_gif(images::Array{Image}, width, height, filename="plot.gif", dela
 		cmd = `convert $dir/$name$i.png -resize $size\! $dir/$name$i.png`
 		run(cmd)
 		# println("Converted image to $name$i.gif")
-		print("$(round(i/length(images))*100)% done\r")
+		print("$(round(i/length(images)*100))% done\r")
 	end
 	println("Assembling gif (this may take awhile)")
 	args = reduce(vcat, [[joinpath("$dir", "$name$i.png"), "-delay", "$(delay * 100)", "-alpha", "remove"] for i in 1:length(images)])
