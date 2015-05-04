@@ -42,3 +42,7 @@ julia> animated_cos = AnimatedGraph(cos, color=SFML.blue, startx=-10)
 julia> animated_cos.speed = 100 # Speed in pixels per second
 julia> plot(animated_cos)
 ```
+
+See `examples/double_pendulum.jl` for an advanced showcase of how to integrate an animated plot into an SFML application
+
+![double pendulum](zyedidia.github.io/assets/double_pendulum.gif)

@@ -62,7 +62,9 @@ for i = 1:2
 end
 set_position(rectangles[1], Vector2f(400, 300))
 
-make_gif(plotwindow, 100, 100, 30, "double_pendulum.gif", 0.1)
+# clock = Clock()
+# gif_made = false
+
 while isopen(window)
 	sleep(0)
 	while pollevent(window, event)
@@ -88,6 +90,13 @@ while isopen(window)
 		t += delta * td / cycles
 		a += delta * ad / cycles
 	end
+
+	# if as_seconds(get_elapsed_time(clock)) >= 10 && !gif_made
+	# 	gif_made = true
+	# 	println("Making gif")
+	# 	make_gif(plotwindow, 600, 450, 10, "double_pendulum.gif", 0.04)
+	# end
+
 	x1 = 400 + 100 * sin(t)
 	y1 = 300 + 100 * cos(t)
 	x2 = 400 + 100 * (sin(t) + sin(a + t))
