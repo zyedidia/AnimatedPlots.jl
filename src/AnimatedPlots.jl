@@ -1,6 +1,5 @@
 module AnimatedPlots
 
-using Reexport
 importall SFML
 
 include("graph.jl")
