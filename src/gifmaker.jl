@@ -60,7 +60,7 @@ function make_gif(images::Array{Image}, width, height, filename="plot.gif", dela
 		# println("Converted image to $name$i.gif")
 		println("$(round(i/length(images))*100)% done")
 	end
-	println("Assembling gif")
+	println("Assembling gif (this may take awhile)")
 	args = reduce(vcat, [[joinpath("$dir", "$name$i.png"), "-delay", "$(delay * 100)", "-alpha", "remove"] for i in 1:length(images)])
 	imagemagick_cmd = `convert $args $filename`
 	run(imagemagick_cmd)

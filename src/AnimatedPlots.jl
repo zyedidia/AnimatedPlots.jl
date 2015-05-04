@@ -91,6 +91,11 @@ function screenshot(filename::String)
 	destroy(image)
 end
 
-export open_window, create_window, plot, remove, current_window, get_window, follow, unfollow, screenshot
+function make_gif(width, height, duration, filename="plot.gif", delay="0.06")
+	make_gif(current_window(), width, height, duration, filename, delay)
+end
+
+export open_window, create_window, plot, remove, current_window, get_window, 
+follow, unfollow, screenshot, make_gif
 
 end

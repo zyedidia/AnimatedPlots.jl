@@ -9,6 +9,7 @@ g = 9.8
 delta = 1/60
 torque = 0
 
+# These functions are used for plotting
 function ft(x)
 	td/2
 end
@@ -17,27 +18,34 @@ function fa(x)
 	ad/2
 end
 
+# Create the SFML render window
 settings = ContextSettings()
 settings.antialiasing_level = 3
 window = RenderWindow(VideoMode(800, 600), "Double Pendulum", settings, window_defaultstyle)
 
+# Create the animated graphs
 t_graph = AnimatedGraph(ft)
 t_graph.accuracy = 2
 a_graph = AnimatedGraph(fa, color=SFML.blue)
 a_graph.accuracy = 2
 
+# Create the plot window using the render window we created earlier
 plotwindow = create_window(window)
+# Add the graphs
 add_graph(plotwindow, t_graph)
 add_graph(plotwindow, a_graph)
 
+# Follow one of them (they will go at the same speed)
 follow(t_graph)
 
-# window = plotwindow.renderwindow
 set_vsync_enabled(window, true)
 
+# Get the views (these are used for drawing
 view = get_default_view(window)
-# set_viewport(view, FloatRect(0, 0, 1.0, 1.0))
 plotview = plotwindow.view
+
+# You can change the viewports if you want
+# set_viewport(view, FloatRect(0, 0, 1.0, 1.0))
 # set_viewport(plotwindow.view, FloatRect(0.0, 0.75, 1.0, 0.25))
 
 set_framerate_limit(window, 60)
@@ -62,6 +70,7 @@ for i = 1:2
 end
 set_position(rectangles[1], Vector2f(400, 300))
 
+# Used for creating gifs
 # clock = Clock()
 # gif_made = false
 
@@ -91,6 +100,7 @@ while isopen(window)
 		a += delta * ad / cycles
 	end
 
+	# Create a gif after 10 seconds (this will take awhile)
 	# if as_seconds(get_elapsed_time(clock)) >= 10 && !gif_made
 	# 	gif_made = true
 	# 	println("Making gif")
@@ -109,12 +119,14 @@ while isopen(window)
 	set_rotation(rectangles[2], -180*(t+a)/pi )
 	set_position(rectangles[2], Vector2f(x1, y1))
 
+	# Calculate the energy
 	# T = td*td + 0.5*(td+ad)^2 + td*(td+ad)*cos(a)
 	# V = -g*(2*cos(t)+cos(t+a))
 	# E = T+V
 	# println(E)
 
 	clear(window, SFML.white)
+	# Set the view for drawing the double pendulum
 	set_view(window, view)
 	for i = 1:length(rectangles)
 		draw(window, rectangles[i])
@@ -122,8 +134,11 @@ while isopen(window)
 	for i = 1:length(circles)
 		draw(window, circles[i])
 	end
+	# Set the view for drawing the plots
 	set_view(window, plotview)
+	# Update the plotwindow
 	redraw(plotwindow)
+	# Draw the plots
 	draw(plotwindow)
 	display(window)
 end

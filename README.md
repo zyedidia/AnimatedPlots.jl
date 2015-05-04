@@ -1,6 +1,8 @@
 # AnimatedPlots
 
-Animated plots currently only supports static plots (animated plots are being made). It is built on top of [SFML.jl] (https://github.com/zyedidia/SFML.jl) and allows for fast plotting of functions.
+Animated plots is a package for making animated and static plots. It is built on top of [SFML.jl] (https://github.com/zyedidia/SFML.jl) and allows for fast plotting of functions and variables over time.
+
+![double pendulum](https://zyedidia.github.io/assets/double_pendulum.gif)
 
 # Installation
 
@@ -41,8 +43,16 @@ julia> plot(animated_sin)
 julia> animated_cos = AnimatedGraph(cos, color=SFML.blue, startx=-10)
 julia> animated_cos.speed = 100 # Speed in pixels per second
 julia> plot(animated_cos)
+julia> follow(animated_cos) # have the camera follow the plot
 ```
 
 See `examples/double_pendulum.jl` for an advanced showcase of how to integrate an animated plot into an SFML application
 
-![double pendulum](https://zyedidia.github.io/assets/double_pendulum.gif)
+### Output
+
+AnimatedPlots supports creating images and gifs of your plots. Creating gifs make take a while, only close your program after it says `Created gif file.gif`
+
+```
+julia> screenshot("my_screenshot.png") # Take a screenshot and save it to my_screenshot.png
+julia> make_gif(300, 300, 10, "MyGif.gif", 0.06) # Create a gif with width, height, duration (in seconds), filename, and delay (the delay between each frame in seconds)
+```
