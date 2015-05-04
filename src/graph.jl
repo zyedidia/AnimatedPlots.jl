@@ -26,10 +26,10 @@ function StaticGraph(fun::Function; thickness=2, color=SFML.red)
 	StaticGraph(fun, points, 1, color, thickness)
 end
 
-function AnimatedGraph(fun::Function; thickness = 2, color = SFML.red, startx = 0)
+function AnimatedGraph(fun::Function; thickness = 2, color = SFML.red, speed = 2, startx = 0)
 	points = Dict{Integer, Vector2f}()
 	clock = Clock()
-	AnimatedGraph(fun, points, 1, startx, startx, 60, clock, 0, color, thickness)
+	AnimatedGraph(fun, points, 1, startx, startx, speed, clock, 0, color, thickness)
 end
 
 function advance(graph::AnimatedGraph, ppu::Real)
@@ -40,7 +40,7 @@ function advance(graph::AnimatedGraph, ppu::Real)
 		advancex(graph)
 	end
 	elapsedtime = as_seconds(get_elapsed_time(graph.clock)) + graph.rtime
-	interval = 1/graph.speed * graph.accuracy
+	interval = 1/graph.speed * graph.accuracy / ppu
 	while elapsedtime >= interval
 		try
 			restart(graph.clock)

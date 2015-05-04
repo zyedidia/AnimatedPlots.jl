@@ -9,8 +9,11 @@ Animated plots is a package for making animated and static plots. It is built on
 AnimatedPlots supports the same operating systems as SFML.jl: Mac OS X and Linux.
 You also need the head version of SFML.jl
 
+Make sure you have SFML and CSFML installed (see the SFML [installation instructions] (https://github.com/zyedidia/SFML.jl#installation) for more information)
+
 ```
 julia> Pkg.clone("SFML")
+julia> Pkg.build("SFML")
 julia> Pkg.clone("https://github.com/zyedidia/AnimatedPlots.jl")
 ```
 
@@ -43,7 +46,7 @@ You can use the `AnimatedGraph` to make animated plots.
 julia> animated_sin = AnimatedGraph(sin)
 julia> plot(animated_sin)
 julia> animated_cos = AnimatedGraph(cos, color=SFML.blue, startx=-10)
-julia> animated_cos.speed = 100 # Speed in pixels per second
+julia> animated_cos.speed = 3 # Speed in units per second
 julia> plot(animated_cos)
 julia> follow(animated_cos) # have the camera follow the plot
 ```

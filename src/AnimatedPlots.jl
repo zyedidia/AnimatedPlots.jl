@@ -95,7 +95,12 @@ function make_gif(width, height, duration, filename="plot.gif", delay="0.06")
 	make_gif(current_window(), width, height, duration, filename, delay)
 end
 
+function set_zoom(zoom::Real)
+	current_window().ppu = zoom
+	redraw(current_window(), true)
+end
+
 export open_window, create_window, plot, remove, current_window, get_window, 
-follow, unfollow, screenshot, make_gif
+follow, unfollow, screenshot, make_gif, set_zoom
 
 end
