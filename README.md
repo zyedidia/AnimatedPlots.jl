@@ -45,4 +45,4 @@ julia> plot(animated_cos)
 
 See `examples/double_pendulum.jl` for an advanced showcase of how to integrate an animated plot into an SFML application
 
-![double pendulum](zyedidia.github.io/assets/double_pendulum.gif)
+![double pendulum](https://zyedidia.github.io/assets/double_pendulum.gif)
