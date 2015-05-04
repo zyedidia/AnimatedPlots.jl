@@ -21,13 +21,24 @@ julia> plot(sin)
 julia> close(current_window())
 ```
 
-A graph object can also be passed to `static_plot` if you want to be able to modify the graph afterward (such as changing the color or line thickness)
+A `StaticGraph` object can also be passed to `plot` if you want to be able to modify the graph afterward (such as changing the color or line thickness)
 
 ```
-julia> sin_graph = StaticGraph(sin, 5, SFML.blue) # thickness and color
+julia> sin_graph = StaticGraph(sin, thickness=5, color=SFML.blue) # thickness and color
 julia> plot(sin_graph)
-julia> set_color(sin_graph, SFML.green)
+julia> sin_graph.color = SFML.green
 julia> plot(cos)
 julia> close(current_window())
 ```
 
+### Animated Plots
+
+You can use the `AnimatedGraph` to make animated plots.
+
+```
+julia> animated_sin = AnimatedGraph(sin)
+julia> plot(animated_sin)
+julia> animated_cos = AnimatedGraph(cos, color=SFML.blue, startx=-10)
+julia> animated_cos.speed = 100 # Speed in pixels per second
+julia> plot(animated_cos)
+```

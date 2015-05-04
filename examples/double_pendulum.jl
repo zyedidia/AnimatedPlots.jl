@@ -17,20 +17,23 @@ function fa(x)
 	ad/2
 end
 
+settings = ContextSettings()
+settings.antialiasing_level = 3
+window = RenderWindow(VideoMode(800, 600), "Double Pendulum", settings, window_defaultstyle)
+
 t_graph = AnimatedGraph(ft)
 t_graph.accuracy = 2
 a_graph = AnimatedGraph(fa, color=SFML.blue)
 a_graph.accuracy = 2
-plotwindow = create_window(name="Double Pendulum")
+
+plotwindow = create_window(window)
 add_graph(plotwindow, t_graph)
 add_graph(plotwindow, a_graph)
 
 follow(t_graph)
 
-# settings = ContextSettings()
-# settings.antialiasing_level = 3
-# window = RenderWindow(VideoMode(800, 600), "Double Pendulum", settings, window_defaultstyle)
-window = plotwindow.renderwindow
+# window = plotwindow.renderwindow
+set_vsync_enabled(window, true)
 
 view = get_default_view(window)
 # set_viewport(view, FloatRect(0, 0, 1.0, 1.0))
@@ -59,6 +62,7 @@ for i = 1:2
 end
 set_position(rectangles[1], Vector2f(400, 300))
 
+make_gif(plotwindow, 100, 100, 30, "double_pendulum.gif", 0.1)
 while isopen(window)
 	sleep(0)
 	while pollevent(window, event)

@@ -11,12 +11,8 @@ type PlotWindow
 	task
 end
 
-function PlotWindow(plotname::String, width::Integer, height::Integer)
-	settings = ContextSettings()
-	settings.antialiasing_level = 4
-	window = RenderWindow(VideoMode(width, height), plotname, settings, window_defaultstyle)
-	# set_framerate_limit(window, 60)
-
+function PlotWindow(window::RenderWindow)
+	width = get_size(window).x; height = get_size(window).y
 	graphs = Graph[]
 
 	view = View(Vector2f(0, 0), Vector2f(width, -height))
@@ -34,6 +30,15 @@ function PlotWindow(plotname::String, width::Integer, height::Integer)
 	rotate(yaxis, 90)
 
 	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(x -> 0), nothing)
+end
+
+function PlotWindow(plotname::String, width::Integer, height::Integer)
+	settings = ContextSettings()
+	settings.antialiasing_level = 4
+	window = RenderWindow(VideoMode(width, height), plotname, settings, window_defaultstyle)
+	# set_framerate_limit(window, 60)
+
+	PlotWindow(window)
 end
 
 function add_graph(window::PlotWindow, graph::Graph)

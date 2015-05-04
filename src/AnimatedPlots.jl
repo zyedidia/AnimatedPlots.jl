@@ -6,6 +6,7 @@ importall SFML
 include("graph.jl")
 include("axis.jl")
 include("plotwindow.jl")
+include("gifmaker.jl")
 
 windows = PlotWindow[]
 
@@ -42,6 +43,13 @@ function remove(graph::Graph)
 	splice!(windows[end].graphs, find(windows[end].graphs .== graph)[1])
 end
 
+function create_window(window::RenderWindow)
+	plotwindow = PlotWindow(window)
+	redraw(plotwindow)
+	push!(windows, plotwindow)
+	return plotwindow
+end
+
 function create_window(; name="Plot", width=800, height=600)
 	window = PlotWindow(name, width, height)
 	redraw(window)
@@ -75,6 +83,13 @@ function unfollow()
 	unfollow(current_window())
 end
 
-export open_window, create_window, plot, remove, current_window, get_window, follow, unfollow
+function screenshot(filename::String)
+	image = capture(current_window().renderwindow)
+	save_to_file(image, filename)
+	println("Saved plot to '$filename'")
+	destroy(image)
+end
+
+export open_window, create_window, plot, remove, current_window, get_window, follow, unfollow, screenshot
 
 end
