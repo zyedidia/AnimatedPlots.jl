@@ -34,6 +34,8 @@ end
 
 function advance(graph::AnimatedGraph, ppu::Real)
 	if graph.xval == graph.startx
+		graph.startx *= ppu
+		graph.xval *= ppu
 		restart(graph.clock)
 		advancex(graph)
 	end
@@ -79,7 +81,6 @@ function draw(window::RenderWindow, graph::Graph)
 			SFML.draw(window, l)
 			destroy(l)
 		end
-		# SFML.draw(window, points[key])
 		last_pos = points[key]
 	end
 end

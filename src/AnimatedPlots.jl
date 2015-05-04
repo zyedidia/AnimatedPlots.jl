@@ -41,6 +41,7 @@ end
 
 function remove(graph::Graph)
 	splice!(windows[end].graphs, find(windows[end].graphs .== graph)[1])
+	nothing
 end
 
 function create_window(window::RenderWindow)

@@ -54,7 +54,7 @@ function redraw(window::PlotWindow, fullredraw=false)
 	right = Int(round(center.x + get_size(window.view).x/2))
 
 	if window.followgraph in window.graphs
-		set_center(window.view, Vector2f(window.followgraph.xval - get_size(window.view).x/2 + 10, 0))
+		set_center(window.view, Vector2f(window.followgraph.xval - get_size(window.view).x/2 + 20, 0))
 	end
 
 	for j = 1:length(window.graphs)
