@@ -7,8 +7,10 @@ Animated plots is a package for making animated and static plots. It is built on
 # Installation
 
 AnimatedPlots supports the same operating systems as SFML.jl: Mac OS X and Linux.
+You also need the head version of SFML.jl
 
 ```
+julia> Pkg.clone("SFML")
 julia> Pkg.clone("https://github.com/zyedidia/AnimatedPlots.jl")
 ```
 
