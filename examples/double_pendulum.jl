@@ -25,9 +25,9 @@ window = RenderWindow(VideoMode(800, 600), "Double Pendulum", settings, window_d
 
 # Create the animated graphs
 t_graph = AnimatedGraph(ft)
-t_graph.accuracy = 2
+t_graph.accuracy = 3
 a_graph = AnimatedGraph(fa, color=SFML.blue)
-a_graph.accuracy = 2
+a_graph.accuracy = 3
 
 # Create the plot window using the render window we created earlier
 plotwindow = create_window(window)

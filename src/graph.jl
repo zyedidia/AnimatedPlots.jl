@@ -44,9 +44,16 @@ function advance(graph::AnimatedGraph, ppu::Real)
 	while elapsedtime >= interval
 		try
 			restart(graph.clock)
-			pos = Vector2f(graph.xval, ppu*graph.fun(graph.xval/ppu))
+			result = graph.fun(graph.xval/ppu)
+			pos = Vector2f(0, 0)
+			if typeof(result) <: Real
+				pos = Vector2f(graph.xval, ppu*result)
+			else
+				pos = Vector2f(ppu*result[1], ppu*result[2])
+			end
 			graph.points[graph.xval] = pos
 		catch exception
+			println(exception)
 		end
 		advancex(graph)
 		elapsedtime -= interval
@@ -60,14 +67,20 @@ end
 
 function add_point(graph::Graph, index::Integer, ppu::Real)
 	try
-		pos = Vector2f(index, ppu*graph.fun(index/ppu))
+		pos = Vector2f(0, 0)
+		result = graph.fun(index/ppu)
+		if typeof(result) <: Real
+			pos = Vector2f(index, ppu*result)
+		else
+			pos = Vector2f(ppu*result[1], ppu*result[2])
+		end
 		graph.points[index] = pos
 	catch exception
 	end
 end
 
-function add_point(graph::Graph, pos::Vector2f)
-	graph.points[pos.x] = pos
+function add_point(graph::Graph, index::Integer, pos::Vector2f)
+	graph.points[index] = pos
 end
 
 function draw(window::RenderWindow, graph::Graph)

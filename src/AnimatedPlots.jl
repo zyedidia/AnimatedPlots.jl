@@ -2,9 +2,10 @@ module AnimatedPlots
 
 importall SFML
 
+include("types.jl")
 include("graph.jl")
-include("axis.jl")
 include("plotwindow.jl")
+include("axis.jl")
 include("gifmaker.jl")
 
 windows = PlotWindow[]

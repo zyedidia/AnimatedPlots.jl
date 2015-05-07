@@ -4,8 +4,8 @@ type PlotWindow
 	view::View
 	event::Event
 	last_mousepos::Vector2f
-	xaxis::RectangleShape
-	yaxis::RectangleShape
+	xaxis::Axis
+	yaxis::Axis
 	ppu::Real
 	followgraph::AnimatedGraph
 	task
@@ -18,16 +18,8 @@ function PlotWindow(window::RenderWindow)
 	view = View(Vector2f(0, 0), Vector2f(width, -height))
 	event = Event()
 
-	xaxis = RectangleShape()
-	set_fillcolor(xaxis, Color(128, 128, 128))
-	set_size(xaxis, Vector2f(get_size(view).x, 2))
-	set_origin(xaxis, Vector2f(get_size(view).x/2, 1))
-
-	yaxis = RectangleShape()
-	set_fillcolor(yaxis, Color(128, 128, 128))
-	set_size(yaxis, Vector2f(get_size(view).y, 2))
-	set_origin(yaxis, Vector2f(get_size(view).y/2, 1))
-	rotate(yaxis, 90)
+	xaxis = Axis(view, true)
+	yaxis = Axis(view, false)
 
 	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(x -> 0), nothing)
 end
@@ -46,9 +38,6 @@ function add_graph(window::PlotWindow, graph::Graph)
 end
 
 function redraw(window::PlotWindow, fullredraw=false)
-	update_xaxis(window.renderwindow, window.view, window.xaxis)
-	update_yaxis(window.renderwindow, window.view, window.yaxis)
-
 	center = get_center(window.view)
 	left = Int(round(center.x - get_size(window.view).x/2))
 	right = Int(round(center.x + get_size(window.view).x/2))
@@ -56,6 +45,9 @@ function redraw(window::PlotWindow, fullredraw=false)
 	if window.followgraph in window.graphs
 		set_center(window.view, Vector2f(window.followgraph.xval - get_size(window.view).x/2 + 20, 0))
 	end
+
+	update(window.xaxis, window)
+	update(window.yaxis, window)
 
 	for j = 1:length(window.graphs)
 		i = left
@@ -76,7 +68,7 @@ function redraw(window::PlotWindow, fullredraw=false)
 				if i % window.graphs[j].accuracy == 0
 					if !fullredraw
 						if haskey(window.graphs[j].points, i)
-							add_point(window.graphs[j], window.graphs[j].points[i])
+							add_point(window.graphs[j], i, window.graphs[j].points[i])
 						else
 							add_point(window.graphs[j], i, window.ppu)
 						end
@@ -151,8 +143,8 @@ end
 
 function draw(window::PlotWindow)
 	set_view(window.renderwindow, window.view)
-	SFML.draw(window.renderwindow, window.xaxis)
-	SFML.draw(window.renderwindow, window.yaxis)
+	draw(window, window.xaxis)
+	draw(window, window.yaxis)
 	for i = 1:length(window.graphs)
 		draw(window.renderwindow, window.graphs[i])
 	end

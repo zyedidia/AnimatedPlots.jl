@@ -55,7 +55,7 @@ See `examples/double_pendulum.jl` for an advanced showcase of how to integrate a
 
 ### Output
 
-AnimatedPlots supports creating images and gifs of your plots. Creating gifs make take a while, only close your program after it says `Created gif file.gif`
+AnimatedPlots supports creating images and gifs of your plots. Creating gifs may take a while, only close your program after it says `Created gif file.gif`. In addition, you must have [imagemagick] (http://www.imagemagick.org/script/binary-releases.php) installed in order to make gifs (most package managers provide it).
 
 ```
 julia> screenshot("my_screenshot.png") # Take a screenshot and save it to my_screenshot.png
