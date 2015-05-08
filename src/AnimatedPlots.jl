@@ -88,7 +88,6 @@ function screenshot(filename::String)
 	image = capture(current_window().renderwindow)
 	save_to_file(image, filename)
 	println("Saved plot to '$filename'")
-	destroy(image)
 end
 
 function make_gif(width, height, duration, filename="plot.gif", delay="0.06")

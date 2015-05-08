@@ -17,8 +17,6 @@ function Axis(view::View, xaxis::Bool)
 	set_origin(tic, Vector2f(5, 0.5))
 
 	number = RenderText()
-	# font = Font("arial.ttf")
-	# set_font(number, font)
 	set_charactersize(number, 15)
 	set_scale(number, Vector2f(1, -1))
 	set_color(number, Color(128, 128, 128))

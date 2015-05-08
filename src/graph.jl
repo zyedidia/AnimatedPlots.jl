@@ -92,7 +92,6 @@ function draw(window::RenderWindow, graph::Graph)
 			l = Line(points[key], last_pos, graph.thickness)
 			set_fillcolor(l, graph.color)
 			SFML.draw(window, l)
-			destroy(l)
 		end
 		last_pos = points[key]
 	end
