@@ -11,7 +11,7 @@ function make_gif(window::PlotWindow, width, height, duration, filename="plot.gi
 			if as_seconds(get_elapsed_time(delay_clock)) >= delay
 				restart(delay_clock)
 				texture = Texture(800, 600)
-				update_from_window(texture, window.renderwindow)
+				update(texture, window.renderwindow)
 				push!(textures, texture)
 			end
 		end
