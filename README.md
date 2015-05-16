@@ -2,7 +2,7 @@
 
 Animated plots is a package for making animated and static plots. It is built on top of [SFML.jl] (https://github.com/zyedidia/SFML.jl) and allows for fast plotting of functions and variables over time.
 
-![double pendulum](https://zyedidia.github.io/assets/double_pendulum.webm)
+![double pendulum](https://zyedidia.github.io/assets/double_pendulum2.gif)
 
 # Installation
 
