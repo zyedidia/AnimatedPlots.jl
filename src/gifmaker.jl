@@ -38,16 +38,15 @@ function make_gif(images::Array{Image}, width, height, filename="plot.gif", dela
 
 	for i = 1:length(images)
 		save_to_file(images[i], "$dir/$name$i.png")
-		# println("Created image $dir/$name$i.png")
 		cmd = `convert $dir/$name$i.png -resize $size\! $dir/$name$i.png`
 		run(cmd)
-		# println("Converted image to $name$i.gif")
 		print("$(round(i/length(images)*100))% done\r")
 	end
 	println("Assembling gif (this may take awhile)")
 	args = reduce(vcat, [[joinpath("$dir", "$name$i.png"), "-delay", "$(delay * 100)", "-alpha", "remove"] for i in 1:length(images)])
 	imagemagick_cmd = `convert $args $filename`
 	run(imagemagick_cmd)
+	run(`rm -rf $dir`)
 	println("Created gif $filename")
 end
 

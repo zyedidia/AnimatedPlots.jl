@@ -104,7 +104,7 @@ while isopen(window)
 	# if as_seconds(get_elapsed_time(clock)) >= 10 && !gif_made
 	# 	gif_made = true
 	# 	println("Making gif")
-	# 	make_gif(plotwindow, 600, 450, 10, "double_pendulum.gif", 0.04)
+	# 	make_gif(plotwindow, 600, 450, 2, "double_pendulum.gif", 0.04)
 	# end
 
 	x1 = 400 + 100 * sin(t)
