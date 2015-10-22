@@ -24,7 +24,7 @@ function PlotWindow(window::RenderWindow)
 	PlotWindow(window, graphs, view, event, Vector2f(0, 0), xaxis, yaxis, 20, AnimatedGraph(x -> 0), nothing)
 end
 
-function PlotWindow(plotname::String, width::Integer, height::Integer)
+function PlotWindow(plotname::AbstractString, width::Integer, height::Integer)
 	settings = ContextSettings()
 	settings.antialiasing_level = 4
 	window = RenderWindow(VideoMode(width, height), plotname, settings, window_resize)

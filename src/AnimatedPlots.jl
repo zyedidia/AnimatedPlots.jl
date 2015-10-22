@@ -84,7 +84,7 @@ function unfollow()
 	unfollow(current_window())
 end
 
-function screenshot(filename::String)
+function screenshot(filename::AbstractString)
 	image = capture(current_window().renderwindow)
 	save_to_file(image, filename)
 	println("Saved plot to '$filename'")

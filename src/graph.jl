@@ -45,6 +45,11 @@ function advance(graph::AnimatedGraph, ppu::Real)
 		try
 			restart(graph.clock)
 			result = graph.fun(graph.xval/ppu)
+			if result == nothing
+				advancex(graph)
+				elapsedtime -= interval
+				continue
+			end
 			pos = Vector2f(0, 0)
 			if typeof(result) <: Real
 				pos = Vector2f(graph.xval, ppu*result)
